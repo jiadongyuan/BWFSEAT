@@ -41,14 +41,17 @@
                         </td>
                         <td>
                             <a href="seat-details.html">进入座位表</a>
+                            <c:if test="${currUser.type eq '班主任'}">
                             <a href="javascript:editKlass(${k.id})">编辑</a>
                             <a href="javascript:deleteKlass(${k.id})">删除</a>
+                            </c:if>
                         </td>
                     </tr>
                 </c:forEach>
             </table>
         </div>
         <div class="fl" style="width:400px;">
+            <c:if test="${currUser.type eq '班主任'}">
             <h3>录入新班级座位表</h3>
             <form id="create-klass-form" class="form" action="${pageContext.request.contextPath}/klass/create" method="post">
                 <p>
@@ -76,6 +79,7 @@
                     ${ tipCreateKlass }
                 </p>
             </form>
+            </c:if>
         </div>
         <div class="fc">
         </div>
