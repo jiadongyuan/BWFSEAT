@@ -1,0 +1,39 @@
+@charset "UTF-8";
+* { font-family: "微软雅黑", "Arial"; font-weight: 100; }
+body { background-color: #EEEEEE; }
+body, ul { margin: 0; padding: 0; }
+
+img { border: none; }
+
+.wrapper { width: 1000px; padding: 10px; margin: 0 auto; background-color: #FFFFFF; }
+.center { text-align: center; }
+.welcome { font-size: 14px; text-align: right; padding-right: 20px; }
+.fl { float: left; }
+.fr { float: right; }
+.fc { clear: both; }
+.txt { height: 30px; line-height: 30px; padding:0px 6px; width: 240px; border: 1px solid #00AAFF;}
+.txt-multi-line { height: 100px; line-height: 20px; padding:0px 6px; width: 240px; border: 1px solid #00AAFF;}
+.btn { border: none; cursor: pointer; width: 120px; height: 32px; background-color: #00AAFF; color: #FFFFFF; }
+
+ul.menu {  height: 36px; background-color: #00AAFF; list-style-type: none;}
+ul.menu li { float: left; height: 36px; line-height: 36px; margin-right: 3px; width: 120px; }
+ul.menu li a { display: block; text-align: center; text-decoration: none; color: white; font-weight: bold;}
+ul.menu li a:hover, ul.menu li a.curr { background: #00CCFF; text-decoration: underline;}
+
+.table { border-spacing: 0; border-top: 1px solid #00AAFF; border-left: 1px solid #00AAFF; }
+.table td { padding: 6px; border-bottom: 1px solid #00AAFF; border-right: 1px solid #00AAFF; }
+.table tr.row-header { background-color: #00AAFF; color:white; font-weight: bold;}
+
+label.error {
+    color: red;
+    padding-left: 10px;
+    font-size: 14px;
+}
+
+/* seat.html的样式 */
+p.search * { vertical-align: middle;}
+
+/* seat-details的样式 */
+.seat-sheet { background-color: #00AAFF; width: 690px; height: 366px; }
+.seat-sheet .seat { width: 86px; height: 36px; margin: 3px;  border:3px solid #000000;}
+.seat-sheet .seat input { border: none; width:80px; height: 36px;  background-color: #FFFFFF; padding: 0 3px; font-size: 12px;}

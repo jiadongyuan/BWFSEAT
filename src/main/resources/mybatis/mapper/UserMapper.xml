@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boweifeng.cd.seat.mapper.UserMapper">
+
+    <resultMap id="userResultSet" type="User">
+        <id property="id" column="uid" />
+        <result property="loginId" column="uloginid" />
+        <result property="loginPsw" column="uloginpsw" />
+        <result property="name" column="uname" />
+        <result property="type" column="utype" />
+    </resultMap>
+
+    <sql id="getAllUsers">
+        SELECT uid, uloginid, uloginpsw, uname, utype FROM userinfo
+    </sql>
+
+    <select id="getUserByLoginId" resultMap="userResultSet">
+        <include refid="getAllUsers" /> where uloginid = #{ loginId }
+    </select>
+
+    <select id="getUsersByType" resultMap="userResultSet">
+        <include refid="getAllUsers" /> where utype = #{ type }
+    </select>
+
+    <update id="update">
+      UPDATE userinfo
+      <set>
+          <if test="user.loginId != null">
+            uloginid = #{user.loginId},
+          </if>
+          <if test="user.loginPsw != null">
+            uloginpsw = #{user.loginPsw},
+          </if>
+          <if test="user.name != null">
+            uname = #{user.name},
+          </if>
+          <if test="user.type != null">
+            utype = #{user.type},
+          </if>
+      </set>
+      WHERE uid = #{ user.id }
+    </update>
+
+</mapper>

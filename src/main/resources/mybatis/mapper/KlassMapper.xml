@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boweifeng.cd.seat.mapper.KlassMapper">
+
+    <resultMap id="klassResultSet" type="Klass">
+        <id property="id" column="kid" />
+        <result property="name" column="kname" />
+        <result property="seatCount" column="kseatcount" />
+        <result property="remark" column="kremark" />
+        <association property="master" javaType="User">
+            <id property="id" column="kmasterid" />
+            <result property="name" column="uname"/>
+        </association>
+    </resultMap>
+
+    <sql id="getAllKlasses">
+        SELECT kid, kname, kmasterid, uname, kseatcount, kremark FROM klassinfo
+          left join userinfo on (kmasterid = uid)
+
+    </sql>
+
+    <select id="getKlasses" resultMap="klassResultSet">
+      <include refid="getAllKlasses" /> order by kid desc
+    </select>
+
+    <select id="getKlassByName" resultMap="klassResultSet">
+        <include refid="getAllKlasses" /> where kname = #{ name }
+    </select>
+
+    <select id="getKlassById" resultMap="klassResultSet">
+        <include refid="getAllKlasses" /> where kid = #{ id }
+    </select>
+
+    <insert id="add">
+        INSERT INTO klassinfo (kname, kmasterid, kseatcount, kremark)
+        VALUES (#{klass.name}, #{klass.master.id}, #{klass.seatCount}, #{klass.remark})
+    </insert>
+
+    <delete id="delete">
+        delete from klassinfo where kid = #{ id }
+    </delete>
+
+    <update id="update">
+        update klassinfo set
+          kname = #{ klass.name },
+          kmasterid = #{ klass.master.id },
+          kseatcount = #{ klass.seatCount },
+          kremark = #{ klass.remark }
+        where kid = #{ klass.id }
+    </update>
+</mapper>
