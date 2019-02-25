@@ -2,6 +2,31 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.boweifeng.cd.seat.mapper.SeatMapper">
 
+    <resultMap id="seatResultMap" type="Seat">
+        <id property="id" column="sid" />
+        <result property="content" column="scontent" />
+        <result property="row" column="srow" />
+        <result property="column" column="scolumn" />
+        <result property="status" column="sstatus" />
+        <association property="owner" javaType="User">
+            <id property="id" column="sownerid" />
+            <result property="name" column="uname" />
+            <result property="type" column="utype" />
+        </association>
+        <association property="klass" javaType="Klass">
+            <id property="id" column="sklassid" />
+            <result property="name" column="kname" />
+        </association>
+    </resultMap>
+
+    <select id="getSeatsByKlass" resultMap="seatResultMap">
+        select sid, scontent, srow, scolumn, sownerid, uname, utype, sstatus, sklassid, kname FROM seatinfo
+        left join userinfo on (sownerid = uid)
+        left join klassinfo on (sklassid = kid)
+        where sklassid = #{ kid }
+        order by scolumn, srow
+    </select>
+
     <insert id="add" parameterType="list">
         INSERT INTO seatinfo (scontent, srow, scolumn, sklassid, sstatus) VALUES
         <foreach collection="seats" item="seat" separator=",">

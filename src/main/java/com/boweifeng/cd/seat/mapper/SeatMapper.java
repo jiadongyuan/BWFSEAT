@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface SeatMapper {
     int add(@Param("seats") List<Seat> seats);
+
+    List<Seat> getSeatsByKlass(@Param("kid") int kid);
 }

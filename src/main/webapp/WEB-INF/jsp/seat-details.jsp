@@ -14,70 +14,13 @@
         <div class="fl" style="width: 700px;">
             <h3>109期班级座位表详情</h3>
             <div class="seat-sheet">
-                <div class="fl" style="width: 100x;">
-                    <div class="seat"><input id='1001' type='text'></div>
-                    <div class="seat"><input id='1002' owner='张三' type='text' value='学员A'></div>
-                    <div class="seat"><input id='1003' owner='李四' type='text' value='学员B'></div>
-                    <div class="seat"><input id='1004' type='text'></div>
-                    <div class="seat"><input id='1005' type='text'></div>
-                    <div class="seat"><input id='1006' type='text'></div>
-                    <div class="seat"><input id='1007' type='text'></div>
-                    <div class="seat"><input id='1008' type='text'></div>
+                <c:forEach items="${seats}" var="seatColumns">
+                <div class="fl" style="width: 100px;">
+                    <c:forEach items="${seatColumns}" var="seat">
+                    <div class="seat"><input type='text' id='${seat.id}' owner='${empty seat.owner ? "null" : seat.owner.id}' value="${seat.content}"></div>
+                    </c:forEach>
                 </div>
-                <div class="fl" style="width: 100x;">
-                    <div class="seat"><input id='1009' type='text'></div>
-                    <div class="seat"><input id='1010' type='text'></div>
-                    <div class="seat"><input id='1011' type='text'></div>
-                    <div class="seat"><input id='1012' type='text'></div>
-                    <div class="seat"><input id='1013' type='text'></div>
-                    <div class="seat"><input id='1014' type='text'></div>
-                    <div class="seat"><input id='1015' type='text'></div>
-                    <div class="seat"><input id='1016' type='text'></div>
-                </div>
-                <div class="fl" style="width: 100x;">
-                    <div class="seat"><input id='1017' type='text'></div>
-                    <div class="seat"><input id='1018' type='text'></div>
-                    <div class="seat"><input id='1019' type='text'></div>
-                    <div class="seat"><input id='1020' type='text'></div>
-                    <div class="seat"><input id='1021' type='text'></div>
-                    <div class="seat"><input id='1022' type='text'></div>
-                    <div class="seat"><input id='1023' type='text'></div>
-                    <div class="seat"><input id='1024' type='text'></div>
-                </div>
-                <div class="fl" style="width: 100x;">
-                    <div class="seat"><input id='1025' type='text'></div>
-                    <div class="seat"><input id='1026' type='text'></div>
-                    <div class="seat"><input id='1027' type='text'></div>
-                    <div class="seat"><input id='1028' type='text'></div>
-                    <div class="seat"><input id='1029' type='text'></div>
-                    <div class="seat"><input id='1030' type='text'></div>
-                    <div class="seat"><input id='1031' type='text'></div>
-                    <div class="seat"><input id='1032' type='text'></div>
-                </div>
-                <div class="fl" style="width: 100x;">
-                    <div class="seat"><input id='1033' type='text'></div>
-                    <div class="seat"><input id='1034' type='text'></div>
-                    <div class="seat"><input id='1035' type='text'></div>
-                    <div class="seat"><input id='1036' type='text'></div>
-                    <div class="seat"><input id='1037' type='text'></div>
-                    <div class="seat"><input id='1038' type='text'></div>
-                    <div class="seat"><input id='1039' type='text'></div>
-                    <div class="seat"><input id='1040' type='text'></div>
-                </div>
-                <div class="fl" style="width: 100x;">
-                    <div class="seat"><input id='1041' type='text'></div>
-                    <div class="seat"><input id='1042' type='text'></div>
-                    <div class="seat"><input id='1043' type='text'></div>
-                    <div class="seat"><input id='1044' type='text'></div>
-                    <div class="seat"><input id='1045' type='text'></div>
-                    <div class="seat"><input id='1046' type='text'></div>
-                    <div class="seat"><input id='1047' type='text'></div>
-                    <div class="seat"><input id='1048' type='text'></div>
-                </div>
-                <div class="fl" style="width: 100x;">
-                    <div class="seat"><input id='1049' type='text'></div>
-                    <div class="seat"><input id='1050' type='text'></div>
-                </div>
+                </c:forEach>
             </div>
         </div>
 
@@ -98,15 +41,14 @@
     </div>
 
 </div>
-<script src="js/jquery-3.3.1.min.js"></script>
 <script>
 
-    var currUser = '张三'
+    var currUser = { id: "${currUser.id}", name: "${currUser.name}", type: "${currUser.type}" }
     var  editingId = null
 
     $(function(){
 
-        $(".seat input[owner = '" + currUser + "']").css("color", "green").css("font-weight", "bold")
+        $(".seat input[owner = '" + currUser.id + "']").css("color", "green").css("font-weight", "bold")
 
         $(".seat input")
             .attr("readonly", true)
@@ -117,7 +59,7 @@
                 $(this).parent().css("border-color", "orange")
                 $("#selected-id").html(this.id);
                 $("#selected-content").html(this.value);
-                $("#selected-owner").html($(this).attr("owner")? $(this).attr("owner") : "");
+                $("#selected-owner").html($(this).attr("owner") != "null"? $(this).attr("owner") : "");
 
             }).on("keydown", function(event){
             if(event.keyCode == 13) {
@@ -125,7 +67,7 @@
                 return;
             }
 
-            if($(this).attr("owner") != null && $(this).attr("owner") != currUser) {
+            if($(this).attr("owner") != 'null' && $(this).attr("owner") != currUser.id) {
                 alert("该座位上学员不是自己的学员，不能编辑")
                 return;
             }
@@ -139,7 +81,7 @@
             $("#editing").html(editingId)
             $("#selected-content").html(this.value)
         }).on("dblclick",function(){
-            if($(this).attr("owner") != null && $(this).attr("owner") != currUser) {
+            if($(this).attr("owner") != 'null' && $(this).attr("owner") != currUser.id) {
                 alert("该座位上学员不是自己的学员，不能编辑")
                 return;
             }
@@ -154,13 +96,13 @@
                 $(this).attr("readonly", true).css("cursor", "pointer")
                 if(editingId != null && editingId == this.id) {
                     if($.trim(this.value) == "") {
-                        $(this).removeAttr("owner")
+                        $(this).attr("owner", "null")
                         $(this).css("color", "black").css("font-weight", "lighter")
                         $("#selected-owner").html("")
                     }else {
-                        $(this).attr("owner", currUser)
+                        $(this).attr("owner", currUser.id)
                         $(this).css("color", "green").css("font-weight", "bold")
-                        $("#selected-owner").html(currUser)
+                        $("#selected-owner").html(currUser.id)
                     }
                     editingId=null;
                     $("#editing").html(editingId)
