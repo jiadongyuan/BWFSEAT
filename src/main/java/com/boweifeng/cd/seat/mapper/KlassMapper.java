@@ -17,4 +17,6 @@ public interface KlassMapper {
     Klass getKlassById(@Param("id") int id);
 
     boolean update(@Param("klass") Klass klass);
+
+    int getMaxId();
 }

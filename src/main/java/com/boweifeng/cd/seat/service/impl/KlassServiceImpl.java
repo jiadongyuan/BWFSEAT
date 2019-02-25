@@ -1,11 +1,14 @@
 package com.boweifeng.cd.seat.service.impl;
 
 import com.boweifeng.cd.seat.entity.Klass;
+import com.boweifeng.cd.seat.entity.Seat;
 import com.boweifeng.cd.seat.mapper.KlassMapper;
+import com.boweifeng.cd.seat.mapper.SeatMapper;
 import com.boweifeng.cd.seat.service.KlassService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -14,6 +17,8 @@ public class KlassServiceImpl implements KlassService {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private KlassMapper klassMapper;
+    @Autowired
+    private SeatMapper seatMapper;
 
     @Override
     public List<Klass> getAllKlasses() {
@@ -26,6 +31,22 @@ public class KlassServiceImpl implements KlassService {
             return false;
         }
         klassMapper.add(klass);
+
+        int kid = klassMapper.getMaxId();
+        System.out.println("KlassServiceImpl create : kid = " + kid + ", kname = " + klass.getName() + ", kseatcount = " + klass.getSeatCount() + ", klass.getId() = " + klass.getId());
+        klass.setId(kid);
+
+        List<Seat> seats = new ArrayList<>();
+        for(int i = 0; i < klass.getSeatCount(); i++) {
+            Seat seat = new Seat();
+            seat.setKlass(klass);
+            seat.setRow(i % 8 + 1);
+            seat.setColumn(i / 8 + 1);
+            seat.setStatus("空座位");
+            seats.add(seat);
+        }
+        seatMapper.add(seats);
+
         return true;
     }
 

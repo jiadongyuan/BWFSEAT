@@ -31,7 +31,11 @@
         <include refid="getAllKlasses" /> where kid = #{ id }
     </select>
 
-    <insert id="add">
+    <select id="getMaxId" resultType="int">
+        select max(kid) from klassinfo
+    </select>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO klassinfo (kname, kmasterid, kseatcount, kremark)
         VALUES (#{klass.name}, #{klass.master.id}, #{klass.seatCount}, #{klass.remark})
     </insert>
