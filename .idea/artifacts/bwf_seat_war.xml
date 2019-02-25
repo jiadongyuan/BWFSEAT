@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" build-on-make="true" name="bwf-seat:war">
-    <output-path>$PROJECT_DIR$/target</output-path>
-    <root id="archive" name="bwf-seat-1.0-SNAPSHOT.war">
-      <element id="artifact" artifact-name="bwf-seat:war exploded" />
-    </root>
-  </artifact>
-</component>
