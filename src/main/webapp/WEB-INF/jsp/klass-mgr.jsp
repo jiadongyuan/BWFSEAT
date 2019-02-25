@@ -40,7 +40,7 @@
                             ${k.seatCount}
                         </td>
                         <td>
-                            <a href="seat-details.html">进入座位表</a>
+                            <a href="${pageContext.request.contextPath}/seat/details?kid=${k.id}">进入座位表</a>
                             <c:if test="${currUser.type eq '班主任'}">
                             <a href="javascript:editKlass(${k.id})">编辑</a>
                             <a href="javascript:deleteKlass(${k.id})">删除</a>
@@ -85,6 +85,8 @@
         </div>
     </div>
 </div>
+
+<c:if test="${currUser.type eq '班主任'}">
 <div id="edit-klass-dialog" title="修改班级信息" style="display: none;">
     <form id="edit-klass-form">
         <p>
@@ -124,7 +126,7 @@
             width: 400,
             modal: true,
             open: function() {
-                $("#tipModifyKlass").html("")
+                $("#tipModifyKlass").html("").css("color", "black")
                 $.getJSON("${pageContext.request.contextPath}/klass/edit", {"kid": editKlassId}, function (editKlass) {
                     $("[name='editName']").val(editKlass.name)
                     $("[name='editMaster']").val(editKlass.master.id)
@@ -217,6 +219,7 @@
                     $("#kname-" + editKlassId).html(editName)
                     $("#kmaster-" + editKlassId).html($("[name='editMaster'] option:selected").html())
                     $("#kseatCount-" + editKlassId).html(editSeatCount)
+                    $("#tipModifyKlass").css("color", "black")
                     tip = "修改成功！";
                 } else {
                     tip = "修改失败：不能将班级名改成已存在的其他班级名"
@@ -227,5 +230,6 @@
             "json")
         }
 </script>
+</c:if>
 </body>
 </html>
