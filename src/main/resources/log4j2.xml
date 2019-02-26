@@ -9,7 +9,7 @@
         <root level="info">
             <appender-ref ref="Console" />
         </root>
-        <logger name="com.boweifeng.cd.seat.mapper" additivity="false" level="trace">
+        <logger name="com.boweifeng.cd.seat.mapper" additivity="false" level="info">
             <appender-ref ref="Console" />
         </logger>
     </loggers>

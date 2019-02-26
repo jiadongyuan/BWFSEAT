@@ -34,6 +34,6 @@ label.error {
 p.search * { vertical-align: middle;}
 
 /* seat-details的样式 */
-.seat-sheet { background-color: #00AAFF; width: 690px; height: 366px; }
+.seat-sheet { background-color: #00AAFF; width: 700px; height: 366px; }
 .seat-sheet .seat { width: 86px; height: 36px; margin: 3px;  border:3px solid #000000;}
 .seat-sheet .seat input { border: none; width:80px; height: 36px;  background-color: #FFFFFF; padding: 0 3px; font-size: 12px;}

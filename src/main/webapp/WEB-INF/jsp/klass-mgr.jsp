@@ -131,6 +131,7 @@
                     $("[name='editName']").val(editKlass.name)
                     $("[name='editMaster']").val(editKlass.master.id)
                     $("[name='editSeatCount']").val(editKlass.seatCount)
+                    editKlassOldSeatCount = editKlass.seatCount
                     $("[name='editRemark']").val(editKlass.remark)
                 })
             }
@@ -149,14 +150,14 @@
                 name: "required",
                 seatCount: {
                     required: true,
-                    range: [1, 60]
+                    range: [30, 56]
                 }
             },
             messages: {
                 name: "班级名不能为空！",
                 seatCount: {
                     required: "座位数量不能为空！",
-                    min: "座位数量必须在1到60之间！"
+                    min: "座位数量必须在30到56之间！"
                 }
             }
         })
@@ -176,14 +177,14 @@
                 editName: "required",
                 editSeatCount: {
                     required: true,
-                    range: [1, 60]
+                    range: [30, 56]
                 }
             },
             messages: {
                 editName: "班级名不能为空！",
                 editSeatCount: {
                     required: "座位数量不能为空！",
-                    min: "座位数量必须在1到60之间！"
+                    min: "座位数量必须在30到56之间！"
                 }
             }
         })
@@ -194,12 +195,13 @@
     })
 
     function deleteKlass(kid) {
-        if(confirm("是否真的要删除该班级座位表？")) {
+        if(confirm("是否真的要删除该班级座位表（会删除该班级的所有座位信息）？")) {
             location.href = "${pageContext.request.contextPath}/klass/delete?kid=" + kid
         }
     }
 
     var editKlassId;
+    var editKlassOldSeatCount;
 
     function editKlass(kid) {
         editKlassId = kid;
@@ -208,11 +210,22 @@
 
     function modifyKlass() {
         var editName = $.trim($("[name='editName']").val())
-        var editSeatCount = $.trim($("[name='editSeatCount']").val())
+        var editSeatCount = window.parseInt($.trim($("[name='editSeatCount']").val()))
         var editMasterId = $("[name='editMaster']").val()
         var editRemark = $.trim($("[name='editRemark']").val())
+
+        var seatCountWarn = ""
+        if(editKlassOldSeatCount > editSeatCount) {
+            seatCountWarn = "修改后将删除座位表中最后" + (editKlassOldSeatCount - editSeatCount) + "个座位，是否确认修改？";
+        } else if(editKlassOldSeatCount < editSeatCount){
+            seatCountWarn = "修改后将增加" + (editSeatCount - editKlassOldSeatCount) + "个座位，是否确认修改？"
+        }
+
+        if(seatCountWarn != "" && !window.confirm(seatCountWarn)) {
+            return;
+        }
         $.post("${pageContext.request.contextPath}/klass/modify",
-            {"id": editKlassId, "name" : editName, "master.id": editMasterId, "seatCount": editSeatCount, "remark": editRemark},
+            {"id": editKlassId, "name" : editName, "master.id": editMasterId, "seatCount": editSeatCount, "remark": editRemark, "oldSeatCount": editKlassOldSeatCount},
             function (result) {
                 var tip
                 if(result){
@@ -220,6 +233,7 @@
                     $("#kmaster-" + editKlassId).html($("[name='editMaster'] option:selected").html())
                     $("#kseatCount-" + editKlassId).html(editSeatCount)
                     $("#tipModifyKlass").css("color", "black")
+                    editKlassOldSeatCount = editSeatCount
                     tip = "修改成功！";
                 } else {
                     tip = "修改失败：不能将班级名改成已存在的其他班级名"

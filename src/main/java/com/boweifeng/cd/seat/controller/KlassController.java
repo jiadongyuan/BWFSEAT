@@ -53,7 +53,7 @@ public class KlassController {
 
     @RequestMapping("/modify")
     @ResponseBody
-    public boolean modify(Klass klass) {
-        return klassService.modify(klass);
+    public boolean modify(Klass klass, int oldSeatCount) {
+        return klassService.modify(klass, oldSeatCount);
     }
 }

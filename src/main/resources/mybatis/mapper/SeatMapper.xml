@@ -34,5 +34,37 @@
         </foreach>
     </insert>
 
+    <delete id="deleteByKlass">
+        delete from seatinfo where sklassid = #{ kid }
+    </delete>
 
+    <delete id="deleteSeatsByKlassGreatThan">
+        delete from seatinfo where sklassid = #{ kid } and (scolumn-1) * 8 + srow > #{ seatCount }
+    </delete>
+
+    <update id="update">
+        update seatinfo
+        <set>
+          scontent = #{ seat.content },
+          <if test="seat.row != 0">
+              srow = ${ seat.row},
+          </if>
+          <if test="seat.column != 0">
+              scloumn = ${ seat.column },
+          </if>
+          <if test="seat.status != null">
+              sstatus = #{ seat.status },
+          </if>
+          <if test="seat.owner != null">
+              sownerid = #{ seat.owner.id },
+          </if>
+          <if test="seat.owner == null">
+              sownerid = null,
+          </if>
+            <if test="seat.klass != null">
+                sklassid = #{ seat.klass.id },
+            </if>
+        </set>
+        WHERE sid = #{ seat.id }
+    </update>
 </mapper>

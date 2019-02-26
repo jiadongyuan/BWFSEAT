@@ -15,5 +15,5 @@ public interface KlassService {
 
     Klass getKlassById(int kid);
 
-    boolean modify(Klass klass);
+    boolean modify(Klass klass, int oldSeatCount);
 }

@@ -17,6 +17,8 @@ public class KlassServiceImpl implements KlassService {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private KlassMapper klassMapper;
+
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private SeatMapper seatMapper;
 
@@ -68,6 +70,7 @@ public class KlassServiceImpl implements KlassService {
 
     @Override
     public void delete(int kid) {
+        seatMapper.deleteByKlass(kid);
         klassMapper.delete(kid);
     }
 
@@ -77,12 +80,26 @@ public class KlassServiceImpl implements KlassService {
     }
 
     @Override
-    public boolean modify(Klass klass) {
+    public boolean modify(Klass klass, int oldSeatCount) {
         if(!klassMapper.getKlassById(klass.getId()).getName().equals(klass.getName())
                 && klassMapper.getKlassByName(klass.getName()) != null) {
             return false;
         }
         klassMapper.update(klass);
+        if(oldSeatCount > klass.getSeatCount()) {
+            seatMapper.deleteSeatsByKlassGreatThan(klass.getId(), klass.getSeatCount());
+        } else if(oldSeatCount < klass.getSeatCount()) {
+            List<Seat> moreSeats = new ArrayList<>();
+            for(int i = oldSeatCount; i < klass.getSeatCount(); i++) {
+                Seat seat = new Seat();
+                seat.setKlass(klass);
+                seat.setRow(i % 8 + 1);
+                seat.setColumn(i / 8 + 1);
+                seat.setStatus("空座位");
+                moreSeats.add(seat);
+            }
+            seatMapper.add(moreSeats);
+        }
         return true;
     }
 }

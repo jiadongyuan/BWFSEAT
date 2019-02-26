@@ -12,6 +12,7 @@ import java.util.List;
 @Service
 public class SeatServiceImpl implements SeatService {
 
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     private SeatMapper seatMapper;
 
@@ -19,27 +20,20 @@ public class SeatServiceImpl implements SeatService {
     public List<List<Seat>> getSeatsByKlass(int kid) {
         List<Seat> seatsAll = seatMapper.getSeatsByKlass(kid);
         List<List<Seat>> seats = new ArrayList<>();
-        for(Seat seat : seatsAll) {           
-            
+        for(Seat seat : seatsAll) {
             List<Seat> seatsColumn = existsColumn(seats, seat.getColumn());
-            
             if(seatsColumn == null) {
                 seatsColumn = new ArrayList<>();
                 seats.add(seatsColumn);
             }
             seatsColumn.add(seat);
-            System.out.println("seat: id=" + seat.getId() + ", content=" + seat.getContent() + ", row=" +seat.getRow() + ", column=" + seat.getColumn() + ", status=" + seat.getStatus()
-                + ", owner[" + (seat.getOwner() == null ? "null" : ("id=" + seat.getOwner().getId() + ", name=" + seat.getOwner().getName() + ", type=" + seat.getOwner().getType()))  +  "]"
-                + ", klass[" + (seat.getKlass() == null ? "null" : ("id=" + seat.getKlass().getId() + ", name=" + seat.getKlass().getName())) + "]");
-        }
-        for(List<Seat> seatsColumn : seats) {
-            for(Seat seat : seatsColumn) {
-                System.out.println("第" + seat.getColumn() + "列第" + seat.getRow() + "排：" + "seat: id=" + seat.getId() + ", content=" + seat.getContent() + ", row=" +seat.getRow() + ", column=" + seat.getColumn() + ", status=" + seat.getStatus()
-                        + ", owner[" + (seat.getOwner() == null ? "null" : ("id=" + seat.getOwner().getId() + ", name=" + seat.getOwner().getName() + ", type=" + seat.getOwner().getType()))  +  "]"
-                        + ", klass[" + (seat.getKlass() == null ? "null" : ("id=" + seat.getKlass().getId() + ", name=" + seat.getKlass().getName())) + "]") ;
-            }
         }
         return seats;
+    }
+
+    @Override
+    public void update(Seat seat) {
+        seatMapper.update(seat);
     }
 
     private List<Seat> existsColumn(List<List<Seat>> seats, int column) {
