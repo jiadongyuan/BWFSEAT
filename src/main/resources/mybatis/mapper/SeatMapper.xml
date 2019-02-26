@@ -61,9 +61,9 @@
           <if test="seat.owner == null">
               sownerid = null,
           </if>
-            <if test="seat.klass != null">
-                sklassid = #{ seat.klass.id },
-            </if>
+        <if test="seat.klass != null">
+            sklassid = #{ seat.klass.id },
+        </if>
         </set>
         WHERE sid = #{ seat.id }
     </update>

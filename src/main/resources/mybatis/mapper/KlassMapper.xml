@@ -16,7 +16,6 @@
     <sql id="getAllKlasses">
         SELECT kid, kname, kmasterid, uname, kseatcount, kremark FROM klassinfo
           left join userinfo on (kmasterid = uid)
-
     </sql>
 
     <select id="getKlasses" resultMap="klassResultSet">
