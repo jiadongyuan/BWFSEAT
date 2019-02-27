@@ -62,6 +62,8 @@
      */
     var currUser = {id: "${currUser.id}", name: "${currUser.name}", type: "${currUser.type}"}
 
+    var currKlassId = ${ klass.id }
+
 
     $(function () {
 
@@ -74,11 +76,16 @@
         ws.onmessage = function (event) {
             var message = JSON.parse(event.data);
             console.log("\nmessage: ", message)
-            if($("#" + message.seat.id).length == 0) {
-                return
-            }
-
-            if (message.cmd == "seatupdated") {
+            if (message.cmd == "klassmodified" && currKlassId == message.id) {
+                alert("班主任刚刚修改了座位表班级信息，关闭对话框后会更新班级座位表")
+                window.location = "${pageContext.request.contextPath}/seat/details?kid=" + currKlassId
+            } else if (message.cmd == "klassdeleted" && currKlassId == message.id) {
+                alert("班主任刚刚删除了座位表班级信息，关闭对话框后会返回班级列表")
+                window.location = "${pageContext.request.contextPath}/klass/mgr"
+            } else if (message.cmd == "seatupdated") {
+                if($("#" + message.seat.id).length == 0) {
+                    return
+                }
                 $("#" + message.seat.id).val(message.seat.content).css("color", "black").css("font-weight", "lighter")
                 $("#ownerinfo-" + message.seat.id).html(JSON.stringify(message.seat.owner))
                 $("#status-" + message.seat.id).html(message.seat.status)
@@ -88,9 +95,15 @@
                     $("#" + + message.seat.id).css("background-color", "white");
                 }
             } else if (message.cmd == "seatediting") {
+                if($("#" + message.seat.id).length == 0) {
+                    return
+                }
                 $("#" + message.seat.id).val("['" + message.seat.owner.name + "'编辑中]").css("color", "black")
                 $("#ownerinfo-" + message.seat.id).html(JSON.stringify(message.seat.owner))
             } else if (message.cmd == "seatstatuschanged") {
+                if($("#" + message.seat.id).length == 0) {
+                    return
+                }
                 $("#status-" + message.seat.id).html(message.seat.status)
                 if(message.seat.status == "已提交资料") {
                     $("#" + + message.seat.id).css("background-color", "yellow");

@@ -6,12 +6,19 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class SeatHandler extends TextWebSocketHandler {
 
     private static ConcurrentHashMap<String, WebSocketSession> sessions = new ConcurrentHashMap<>();
+
+    public static synchronized void sendMessagesToAllClient(String message) throws IOException {
+        for(WebSocketSession session : sessions.values()) {
+            session.sendMessage(new TextMessage(message));
+        }
+    }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {

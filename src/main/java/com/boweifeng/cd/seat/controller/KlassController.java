@@ -3,11 +3,13 @@ package com.boweifeng.cd.seat.controller;
 import com.boweifeng.cd.seat.entity.Klass;
 import com.boweifeng.cd.seat.service.KlassService;
 import com.boweifeng.cd.seat.service.UserService;
+import com.boweifeng.cd.seat.websocket.SeatHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -40,8 +42,9 @@ public class KlassController {
     }
 
     @RequestMapping("/delete")
-    public String delete(int kid) {
+    public String delete(int kid) throws IOException {
         klassService.delete(kid);
+        SeatHandler.sendMessagesToAllClient("{\"cmd\": \"klassdeleted\", \"id\": " + kid + "}");
         return "redirect:/klass/mgr";
     }
 
@@ -53,7 +56,11 @@ public class KlassController {
 
     @RequestMapping("/modify")
     @ResponseBody
-    public boolean modify(Klass klass, int oldSeatCount) {
-        return klassService.modify(klass, oldSeatCount);
+    public boolean modify(Klass klass, int oldSeatCount) throws IOException {
+        boolean modifyResult = klassService.modify(klass, oldSeatCount);
+        if(modifyResult) {
+            SeatHandler.sendMessagesToAllClient("{\"cmd\": \"klassmodified\", \"id\": " + klass.getId() + "}");
+        }
+        return modifyResult;
     }
 }
