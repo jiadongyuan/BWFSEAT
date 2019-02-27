@@ -31,7 +31,6 @@ public class SeatController {
     @RequestMapping("/update")
     public void update(Seat seat) {
         seatService.update(seat);
-
     }
 
 }

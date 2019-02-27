@@ -30,7 +30,7 @@ public class UserController {
             return "forward:/";
         } else {
             session.setAttribute("currUser", user);
-            return "redirect:/user/home";
+            return "redirect:/klass/mgr";
         }
     }
 
