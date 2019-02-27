@@ -28,9 +28,9 @@ public class SeatController {
     }
 
     @ResponseBody
-    @RequestMapping("/update")
-    public void update(Seat seat) {
-        seatService.update(seat);
+    @RequestMapping("/modify")
+    public void modify(Seat seat) {
+        seatService.modify(seat);
     }
 
 }

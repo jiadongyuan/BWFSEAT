@@ -32,7 +32,7 @@ public class SeatServiceImpl implements SeatService {
     }
 
     @Override
-    public void update(Seat seat) {
+    public void modify(Seat seat) {
         seatMapper.update(seat);
     }
 
