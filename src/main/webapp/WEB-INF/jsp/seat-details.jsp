@@ -75,7 +75,26 @@
     //  当前选中的座位ID，初始值为null
     var selectedId = null;
 
-    var alerting = false;
+    var alertingKlassModified = false;
+    var alertingKlassDeleted = false;
+
+    var settingOwnerSytle = function ($seat, owner) {
+        if(owner && owner.id === currUser.id) {
+            $seat.css("color", "green");
+            $seat.css("font-weight", "bold");
+        } else {
+            $seat.css("color", "black");
+            $seat.css("font-weight", "lighter");
+        }
+    };
+
+    var settingSubmittedStyle = function ($seat, status) {
+        if(status === "已提交资料") {
+            $seat.css("background-color", "yellow");
+        } else {
+            $seat.css("background-color", "white");
+        }
+    };
 
     $(function () {
 
@@ -94,23 +113,22 @@
                     return;
                 }
             }
-            if (message.cmd === "klassmodified" && currKlassId === message.id && !alerting) {
-                alerting = true;
+            if (message.cmd === "klassmodified" && currKlassId === message.id && !alertingKlassModified) {
+                alertingKlassModified = true;
                 alert("班主任刚刚修改了座位表班级信息，关闭对话框后会更新班级座位表");
                 window.location = "${pageContext.request.contextPath}/seat/details?kid=" + currKlassId;
-            } else if (message.cmd === "klassdeleted" && currKlassId === message.id && !alerting) {
-                alerting = true;
+            } else if (message.cmd === "klassdeleted" && currKlassId === message.id && !alertingKlassDeleted) {
+                alertingKlassDeleted = true;
                 alert("班主任刚刚删除了座位表班级信息，关闭对话框后会返回班级列表");
                 window.location = "${pageContext.request.contextPath}/klass/mgr";
             } else if (message.cmd === "seatmodified") { // 当收到服务器推送的其他用户发送的“某个座位已修改”通知时
                 /**
-                 *  更新该“座位”上的内容、取消“拥有者”样式（粗体、绿字）、设置“座位状态”样式。
+                 *  更新该“座位”上的内容、设置或取消“拥有者”样式、设置“座位状态”样式。
                  *  更新该“座位”上隐藏的“拥有者”信息、“状态”信息
                  */
-                $seat.val(s.content)
-                    .css("color", "black")
-                    .css("font-weight", "lighter")
-                    .css("background-color", s.status === "已提交资料" ? "yellow" : "white");
+                $seat.val(s.content);
+                settingOwnerSytle($seat, s.owner);
+                settingSubmittedStyle($seat, s.status);
                 $("#ownerinfo-" + s.id).html(JSON.stringify(s.owner));
                 $("#status-" + s.id).html(s.status);
                 /**
@@ -132,6 +150,10 @@
             } else if (message.cmd === "seatediting") {
                 $seat.val("['" + s.owner.name + "'编辑中]");
                 $("#ownerinfo-" + s.id).html(JSON.stringify(s.owner))
+                if(s.id === selectedId) {
+                    $(SELECTED_CONTENT).html("['" + s.owner.name + "'编辑中...]");
+                    $(SELECTED_OWNER).html(s.owner.name);
+                }
             }
         };
 
@@ -139,24 +161,21 @@
          *  当“座位状态设置复选框”被单击时，更新“当前选中座位”的状态、样式，并通知服务器（发送websocket消息）
          */
         $(SEAT_STATUS_SETTING_CHECKBOX_CCS_SELECTOR).on("click", function () {
+            var $seat = $("#" + selectedId);
             var status = this.checked ? "已提交资料" : "未提交资料";
-            var content = $.trim($("#" + selectedId).val());
+            var content = $.trim($seat.val());
             var owner = JSON.parse($.trim($("#ownerinfo-" + selectedId).html()));
             var url = "${pageContext.request.contextPath}/seat/modify";
             var param = {"id": selectedId, "content": content, "owner.id": owner.id, "status": status };
             $.post(url, param, function () {
                     $("#status-" + selectedId).html(status);
-                    if(status === "已提交资料") {
-                        $("#" + selectedId).css("background-color", "yellow");
-                    } else{
-                        $("#" + selectedId).css("background-color", "white");
-                    }
+                    settingSubmittedStyle($seat, status);
                     var message = {
                         "cmd": "seatmodified",
                         "seat": {
                             "id": selectedId,
                             "content": content,
-                            "owner": currUser,
+                            "owner": owner,
                             "status": status
                         }
                     };
@@ -168,11 +187,7 @@
          *  将每一“已提交资料”状态的座位的背景颜色设置为：yellow
          */
         $(".seat span[id^='status-']").each(function () {
-            var bgcolor = "white";
-            if ($(this).html() === "已提交资料") {
-                bgcolor = "yellow";
-            }
-            $(this).prevAll("input").css("background-color", bgcolor);
+            settingSubmittedStyle($(this).prevAll("input"), $(this).html());
         });
 
         /**
@@ -180,11 +195,8 @@
          */
         $(".seat span[id^='ownerinfo-']").each(function () {
             var owner = JSON.parse($.trim($(this).html()));
-            if (owner && owner.id === currUser.id) {
-                $(this).prevAll("input").css("color", "green").css("font-weight", "bold");
-            }
+            settingOwnerSytle($(this).prevAll("input"), owner);
         });
-
 
         /**
          *  将所有座位文本框的初始状态设置为只读，手型光标
@@ -197,9 +209,7 @@
          *  （2）页面右侧“座位信息栏”上更新“选中座位”信息：content、owner
          */
         $(SEAT_INPUT_CSS_SELECTOR).on("focus", function () {
-
-            selectedId = window.parseInt($(this).attr("id"));
-
+            selectedId = window.parseInt(this.id);
             // 恢复所有的座位的非选中样式
             $('.seat').css("border-color", "#000000");
             // 设置选中座位样式
@@ -210,37 +220,52 @@
             $(SELECTED_CONTENT).html(this.value);
 
             if (currUser.type === "班主任") {
-                if ($.trim($("#" + selectedId).val()) !== "") {
-                    if ($("#status-" + selectedId).html() === "已提交资料") {
-                        $(this).css("background-color", "yellow");
-                        $(SEAT_STATUS_SETTING_CHECKBOX_CCS_SELECTOR).prop("checked", true);
-                    } else {
-                        $(this).css("background-color", "white");
-                        $(SEAT_STATUS_SETTING_CHECKBOX_CCS_SELECTOR).prop("checked", false);
-                    }
+                var status = $("#status-" + selectedId).html();
+                if (status === "已提交资料") {
+                    $(SEAT_STATUS_SETTING_CHECKBOX_CCS_SELECTOR).prop("checked", true);
                     $(SEAT_STATUS_SETTING_FORM_CCS_SELECTOR).show()
-                } else {
+                } else if(status === "未提交资料") {
+                    $(SEAT_STATUS_SETTING_CHECKBOX_CCS_SELECTOR).prop("checked", false);
+                    $(SEAT_STATUS_SETTING_FORM_CCS_SELECTOR).show()
+                } else if(status === "空座位") {
                     $(SEAT_STATUS_SETTING_FORM_CCS_SELECTOR).hide();
                     $(SEAT_STATUS_SETTING_CHECKBOX_CCS_SELECTOR).prop("checked", false);
                 }
             }
         });
 
-        $(SEAT_INPUT_CSS_SELECTOR).on("keydown", function (event) {
-            if (event.keyCode === 116) { // F5键
+        /**
+         *  “座位文本框”发生“按键事件”或者“双击事件”时，有3种可能情况：
+         *  （1）如果座位的拥有者是当前登录用户，则该“座位文本框”进入编辑中的状态
+         *  （2）如果第（1）点不满足，但当前登录用户是“班主任”，则有权限删除该座位上的信息
+         *  （3）如果第（1）（2）点都不满足，则提示用户不能修改非自己学员信息
+         */
+        $(SEAT_INPUT_CSS_SELECTOR).on("keydown dblclick", function (event) {
+            if (event.keyCode === 116) { // 当前是keydown事件，且为F5键
                 return;
             }
-            if (event.keyCode === 13) { // 回车键
+            if (event.keyCode === 13) { // 当前是keydown事件，且为回车键
                 $(this).blur();
                 return;
             }
-            var owner = JSON.parse($.trim($("#ownerinfo-" + $(this).attr("id")).html()));
+            var owner = JSON.parse($.trim($("#ownerinfo-" + this.id).html()));
             if (!owner || owner.id === currUser.id) {
                 $(this).attr("readonly", false).css("cursor", "auto");
+                if(event.type.toLowerCase() === "dblclick") {
+                    $(this).select();
+                }
+                if (!editingId) {
+                    editingId = window.parseInt(this.id);
+                    var message = {
+                        "cmd": "seatediting",
+                        "seat": {"id": editingId, "owner": currUser}
+                    };
+                    ws.send(JSON.stringify(message));
+                }
             } else if (currUser.type === "班主任") {
                 if (confirm("该座位上学员不是自己的学员，不能修改！\n但您可以删除该座位学员信息，是否要删除？")) {
                     $(this).val("");
-                    editingId = window.parseInt($(this).attr("id"));
+                    editingId = window.parseInt(this.id);
                     $(this).blur();
                 }
             } else {
@@ -248,34 +273,15 @@
             }
         });
 
+        /**
+         *  “座位文本框”发生“输入事件”时，同步更新右侧座位信息栏的内容
+         */
         $(SEAT_INPUT_CSS_SELECTOR).on("input", function () {
-            if (!editingId) {
-                editingId = window.parseInt(this.id);
-                startEditing();
-            }
             $(SELECTED_CONTENT).html(this.value);
+            $(SELECTED_OWNER).html(currUser.name)
         });
 
-        $(SEAT_INPUT_CSS_SELECTOR).on("dblclick", function () {
-            var owner = JSON.parse($.trim($("#ownerinfo-" + $(this).attr("id")).html()));
-            if (!owner || owner.id === currUser.id) {
-                $(this).attr("readonly", false).css("cursor", "auto");
-                $(this).select();
-                if (editingId == null) {
-                    editingId = window.parseInt(this.id);
-                    startEditing();
-                }
-            } else if (currUser.type === "班主任") {
-                if (confirm("该座位上学员不是自己的学员，不能修改！\n但您可以删除该座位学员信息，是否要删除？")) {
-                    editingId = window.parseInt(this.id);
-                    $(this).val("");
-                    $(this).blur();
-                }
-            } else {
-                alert("该座位上学员不是自己的学员，不能修改！")
-            }
 
-        });
 
         $(SEAT_INPUT_CSS_SELECTOR).on("blur", function () {
             //  “座位”文本框失去焦点时，设置成“非选中”样式：只读、手型指针
@@ -296,12 +302,12 @@
                 status = "空座位";
                 param = {"id": id, "status": status};
                 $.post(url, param, function () {
-
                         //  服务器座位信息更新为“空座位”后，设置该座位的拥有者信息为null
-                        $txtSeat.css("color", "black").css("font-weight", "lighter").css("background-color", "white");
+                        settingSubmittedStyle($txtSeat, status);
+                        settingOwnerSytle($txtSeat, null);
                         $("#ownerinfo-" + id).html("null");
                         $("#status-" + id).html("空座位");
-                        if(selectedId == id) {
+                        if(selectedId === id) {
                             $(SELECTED_OWNER).html("[无]");
                             $(SELECTED_CONTENT).html(content);
                             $(SEAT_STATUS_SETTING_FORM_CCS_SELECTOR).hide();
@@ -327,10 +333,10 @@
                 }
                 param = {"id": id, "owner.id": currUser.id, "content": content, "status": status };
                 $.post(url, param, function () {
-                    $txtSeat.css("color", "green").css("font-weight", "bold");
+                    settingOwnerSytle($txtSeat, currUser);
                     $("#ownerinfo-" + id).html(JSON.stringify(currUser));
                     $("#status-" + id).html(status);
-                    if(selectedId == id) {
+                    if(selectedId === id) {
                         $(SELECTED_OWNER).html(currUser.name);
                         $(SELECTED_CONTENT).html(content);
                         if(currUser.type === "班主任") {
@@ -352,15 +358,6 @@
 
             editingId = null;
         });
-
-
-        function startEditing() {
-            var message = {
-                "cmd": "seatediting",
-                "seat": {"id": editingId, "owner": currUser}
-            };
-            ws.send(JSON.stringify(message));
-        }
 
     })
 </script>
