@@ -6,6 +6,8 @@ body, ul { margin: 0; padding: 0; }
 img { border: none; }
 
 .wrapper { width: 1000px; padding: 10px; margin: 0 auto; background-color: #FFFFFF; }
+.header { height: 60px; line-height: 60px; margin: 0; padding: 0;}
+.header h1 { height: 60px; line-height: 60px;  margin: 0; padding: 0;}
 .center { text-align: center; }
 .welcome { font-size: 14px; text-align: right; padding-right: 20px; }
 .fl { float: left; }
@@ -34,6 +36,6 @@ label.error {
 p.search * { vertical-align: middle;}
 
 /* seat-details的样式 */
-.seat-sheet { background-color: #00AAFF; width: 700px; height: 366px; }
-.seat-sheet .seat { width: 86px; height: 36px; margin: 3px;  border:3px solid #000000;}
-.seat-sheet .seat input { border: none; width:80px; height: 36px;  background-color: #FFFFFF; padding: 0 3px; font-size: 12px;}
+.seat-sheet { background-color: #00AAFF; width: 760px; height: 444px; }
+.seat-sheet .seat { width: 102px; height: 50px; margin: 1px;  border:2px solid #000000;}
+.seat-sheet .seat textarea { resize: none; wrap:virtual; overflow: hidden; border: none; width:98px; height: 50px;  background-color: #FFFFFF; padding: 0 2px; font-size: 12px;}

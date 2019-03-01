@@ -11,14 +11,14 @@
     <%@include file="inc/header.jsp" %>
     <%@include file="inc/menu.jsp" %>
     <div>
-        <div class="fl" style="width: 720px;">
+        <div class="fl" style="width: 760px;">
             <h3>${klass.name}座位表详情（座位数量：${klass.seatCount}）</h3>
             <div class="seat-sheet">
                 <c:forEach items="${seats}" var="seatColumns">
-                    <div class="fl" style="width: 100px;">
+                    <div class="fl" style="width: 108px;">
                         <c:forEach items="${seatColumns}" var="seat">
                             <div class="seat">
-                                <input type='text' id='${seat.id}' value="${seat.content}" title="${seat.content}">
+                                <textarea id='${seat.id}' title="${seat.content}">${seat.content}</textarea>
                                 <span id="ownerinfo-${seat.id}" style="display: none;">
                                     <c:if test="${ empty seat.owner}">null</c:if>
                                     <c:if test="${ not empty seat.owner}">{"id": ${seat.owner.id}, "name": "${seat.owner.name}", "type": "${seat.owner.type}" }</c:if>
@@ -31,7 +31,7 @@
             </div>
         </div>
 
-        <div class="fl" style="margin-left: 20px; width:250px;">
+        <div class="fl" style="margin-left: 20px; width: 210px">
             <h3>座位信息</h3>
             <div id='seat-info' style="font-size: 12px;">
                 <p>当前选中的座位上的信息：<span id='selected-content'></span></p>
@@ -55,7 +55,7 @@
     var SEAT_STATUS_SETTING_CHECKBOX_CCS_SELECTOR = "#seat-status-setting-form :checkbox";
 
     //  "所有的座位文本框"的CSS选择器
-    var SEAT_INPUT_CSS_SELECTOR = ".seat input";
+    var SEAT_INPUT_CSS_SELECTOR = ".seat textarea";
 
     //  "选中座位上内容"的CSS选择器
     var SELECTED_CONTENT = "#selected-content";
@@ -99,13 +99,15 @@
     $(function () {
 
         var ws;
+        //var ipAndPort = "172.31.31.252:8080";
+        var ipAndPort = "localhost";
 
         if ('WebSocket' in window) {
-            ws = new WebSocket("ws://172.31.31.252:8080${pageContext.request.contextPath}/websocket");
+            ws = new WebSocket("ws://" + ipAndPort + "${pageContext.request.contextPath}/websocket");
         } else if ('MozWebSocket' in window) {
-            ws = new MozWebSocket("ws://172.31.31.252:8080${pageContext.request.contextPath}/websocket");
+            ws = new MozWebSocket("ws://" + ipAndPort + "${pageContext.request.contextPath}/websocket");
         } else {
-            ws = new SockJS("http://172.31.31.252:8080${pageContext.request.contextPath}/sockjs/websocket");
+            ws = new SockJS("http://" + ipAndPort +  + "${pageContext.request.contextPath}/sockjs/websocket");
         }
 
         window.onbeforeunload = function () {
@@ -196,7 +198,7 @@
          *  将每一“已提交资料”状态的座位的背景颜色设置为：yellow
          */
         $(".seat span[id^='status-']").each(function () {
-            settingSubmittedStyle($(this).prevAll("input"), $(this).html());
+            settingSubmittedStyle($(this).prevAll("textarea"), $(this).html());
         });
 
         /**
@@ -204,7 +206,7 @@
          */
         $(".seat span[id^='ownerinfo-']").each(function () {
             var owner = JSON.parse($.trim($(this).html()));
-            settingOwnerSytle($(this).prevAll("input"), owner);
+            settingOwnerSytle($(this).prevAll("textarea"), owner);
         });
 
         /**
@@ -253,6 +255,7 @@
             if (event.keyCode === 116) { // 当前是keydown事件，且为F5键
                 return;
             }
+
             if (event.keyCode === 13) { // 当前是keydown事件，且为回车键
                 $(this).blur();
                 return;
