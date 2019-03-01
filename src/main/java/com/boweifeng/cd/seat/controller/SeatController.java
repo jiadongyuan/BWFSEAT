@@ -8,9 +8,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("unchecked")
 @Controller
 @RequestMapping("/seat")
 public class SeatController {
@@ -31,6 +34,37 @@ public class SeatController {
     @RequestMapping("/modify")
     public void modify(Seat seat) {
         seatService.modify(seat);
+    }
+
+
+    @ResponseBody
+    @RequestMapping("/editingStart")
+    public void editingStart(HttpServletRequest request, Seat editingSeat) {
+        Map<Integer, Seat> editingSeatMap = (Map<Integer, Seat>) request.getServletContext().getAttribute("editingSeatMap");
+        editingSeatMap.put(editingSeat.getId(), editingSeat);
+    }
+
+    @ResponseBody
+    @RequestMapping("/editingEnd")
+    public void editingEnd(HttpServletRequest request, Seat editingSeat) {
+        Map<Integer, Seat> editingSeatMap = (Map<Integer, Seat>) request.getServletContext().getAttribute("editingSeatMap");
+        editingSeatMap.remove(editingSeat.getId());
+    }
+
+    @ResponseBody
+    @RequestMapping("/getEditingSeatList")
+    public List<Seat> getEditingSeatList(HttpServletRequest request, int kid) {
+        Map<Integer, Seat> editingSeatMap = (Map<Integer, Seat>) request.getServletContext().getAttribute("editingSeatMap");
+        List<List<Seat>> seats = seatService.getSeatsByKlass(kid);
+        List<Seat> editingSeatList = new ArrayList<>();
+        for(List<Seat> seatsOfColumn : seats) {
+           for (Seat seat : seatsOfColumn) {
+               if(editingSeatMap.containsKey(seat.getId())) {
+                   editingSeatList.add(editingSeatMap.get(seat.getId()));
+               }
+           }
+        }
+        return editingSeatList;
     }
 
 }
