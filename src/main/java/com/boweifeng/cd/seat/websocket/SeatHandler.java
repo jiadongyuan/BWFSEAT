@@ -22,25 +22,16 @@ public class SeatHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        System.out.println("\nSeatHandler.afterConnectionEstablished【" + session.getRemoteAddress() + "】");
-        System.out.println("session.getId() = " + session.getId());
-        System.out.println("session.getAttributes() = " + session.getAttributes());
         sessions.put(session.getId(), session);
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        System.out.println("\nSeatHandler.afterConnectionClosed【" + session.getRemoteAddress() + "】");
-        System.out.println("status = " + status);
-        System.out.println("session.getId() = " + session.getId());
-        System.out.println("session.getAttributes() = " + session.getAttributes());
         sessions.remove(session.getId());
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        System.out.println("\nSeatHandler.handleTextMessage【" + session.getRemoteAddress() + "】");
-        System.out.println("message = " + message.getPayload());
         for(String key : sessions.keySet()) {
             if(key.equals(session.getId())) {
                 continue;
