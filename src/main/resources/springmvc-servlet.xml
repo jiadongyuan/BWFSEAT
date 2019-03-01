@@ -33,4 +33,9 @@
     <webscoket:handlers>
         <webscoket:mapping path="/websocket" handler="seatHandler"/>
     </webscoket:handlers>
+
+    <webscoket:handlers>
+        <webscoket:mapping path="/sockjs/websocket" handler="seatHandler" />
+        <webscoket:sockjs />
+    </webscoket:handlers>
 </beans>

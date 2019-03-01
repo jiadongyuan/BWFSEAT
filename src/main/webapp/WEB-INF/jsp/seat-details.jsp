@@ -49,19 +49,19 @@
 <script>
 
     //  "座位状态设置表单"的CSS选择器
-    const SEAT_STATUS_SETTING_FORM_CCS_SELECTOR = "#seat-status-setting-form";
+    var SEAT_STATUS_SETTING_FORM_CCS_SELECTOR = "#seat-status-setting-form";
 
     //  "座位状态设置复选框"的CSS选择器
-    const SEAT_STATUS_SETTING_CHECKBOX_CCS_SELECTOR = "#seat-status-setting-form :checkbox";
+    var SEAT_STATUS_SETTING_CHECKBOX_CCS_SELECTOR = "#seat-status-setting-form :checkbox";
 
     //  "所有的座位文本框"的CSS选择器
-    const SEAT_INPUT_CSS_SELECTOR = ".seat input";
+    var SEAT_INPUT_CSS_SELECTOR = ".seat input";
 
     //  "选中座位上内容"的CSS选择器
-    const SELECTED_CONTENT = "#selected-content";
+    var SELECTED_CONTENT = "#selected-content";
 
     //  "选中座位的拥有者姓名"的CSS选择器
-    const SELECTED_OWNER = "#selected-owner";
+    var SELECTED_OWNER = "#selected-owner";
 
     //  当前登录的用户
     var currUser = {id: ${ currUser.id }, name: "${ currUser.name }", type: "${ currUser.type }"};
@@ -98,7 +98,16 @@
 
     $(function () {
 
-        var ws = new WebSocket("ws://localhost/websocket");
+        var ws;
+
+        if ('WebSocket' in window) {
+            ws = new WebSocket("ws://172.31.31.252:8080${pageContext.request.contextPath}/websocket");
+        } else if ('MozWebSocket' in window) {
+            ws = new MozWebSocket("ws://172.31.31.252:8080${pageContext.request.contextPath}/websocket");
+        } else {
+            ws = new SockJS("http://172.31.31.252:8080${pageContext.request.contextPath}/sockjs/websocket");
+        }
+
         window.onbeforeunload = function () {
             ws.close();
         };

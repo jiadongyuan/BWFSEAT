@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
     <p class="welcome">
         ${currUser.name}[${currUser.type}]，
-            <a href="/user/logout">登出</a>
+            <a href="${pageContext.request.contextPath}/user/logout">登出</a>
     </p>
     <ul class="menu">
         <li><a href="${pageContext.request.contextPath}/user/home">个人中心</a></li>
