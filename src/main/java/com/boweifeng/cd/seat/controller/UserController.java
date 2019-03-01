@@ -25,12 +25,19 @@ public class UserController {
     @RequestMapping("/loginCheck")
     public String loginCheck(Map<String, Object> model, String loginId, String loginPsw, HttpSession session) {
         User user = userService.loginCheck(loginId, loginPsw);
-        if(user == null) {
+        if(user != null && user.getStatus().equals("已停用") ) {
+            model.put("tip", "登录失败：该账号已经停用！");
+            return "forward:/";
+        } else if(user == null) {
             model.put("tip", "登录失败：账号或者密码错误！");
             return "forward:/";
         } else {
             session.setAttribute("currUser", user);
-            return "redirect:/klass/mgr";
+            if(user.getType().equals("管理员")) {
+                return "redirect:/user/mgr";
+            } else {
+                return "redirect:/klass/mgr";
+            }
         }
     }
 
@@ -64,5 +71,33 @@ public class UserController {
             model.put("tipModifyPsw", "密码修改成功");
         }
         return "forward:/user/home";
+    }
+
+    @RequestMapping("/mgr")
+    public String mgr(Map<String, Object> model) {
+        model.put("allUsers", userService.getAllUsers());
+        return "user-mgr";
+    }
+
+    @RequestMapping("/create")
+    public String create(Map<String, Object> model, User user) {
+        String tipCreateUser = "创建新用户失败：账号已经存在，请重新输入账号";
+        if(userService.create(user)) {
+            tipCreateUser = "创建新用户成功！";
+        }
+        model.put("tipCreateUser", tipCreateUser);
+        return "forward:/user/mgr";
+    }
+
+    @RequestMapping("/changeStatus")
+    public String changeStatus(User user) {
+        userService.modify(user);
+        return "redirect:/user/mgr";
+    }
+
+    @RequestMapping("/modify")
+    @ResponseBody
+    public void modify(User user) {
+        userService.modify(user);
     }
 }

@@ -12,4 +12,8 @@ public interface UserMapper {
     void update(@Param("user") User user);
 
     List<User> getUsersByType(@Param("type") String type);
+
+    List<User> getAllUsers();
+
+    void add(@Param("user") User user);
 }

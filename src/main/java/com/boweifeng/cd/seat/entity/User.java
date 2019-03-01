@@ -7,6 +7,7 @@ public class User {
     private String loginPsw;
     private String name;
     private String type;
+    private String status;
 
     public int getId() {
         return id;
@@ -46,5 +47,13 @@ public class User {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

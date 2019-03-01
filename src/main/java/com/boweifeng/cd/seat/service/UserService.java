@@ -10,4 +10,10 @@ public interface UserService {
     void modifyPsw(int id, String newPsw);
 
     List<User> getMasters();
+
+    List<User> getAllUsers();
+
+    void modify(User user);
+
+    boolean create(User user);
 }

@@ -8,19 +8,29 @@
         <result property="loginPsw" column="uloginpsw" />
         <result property="name" column="uname" />
         <result property="type" column="utype" />
+        <result property="status" column="ustatus" />
     </resultMap>
 
-    <sql id="getAllUsers">
-        SELECT uid, uloginid, uloginpsw, uname, utype FROM userinfo
+    <sql id="selectAllUsers">
+        SELECT uid, uloginid, uloginpsw, uname, utype, ustatus FROM userinfo
     </sql>
 
+    <select id="getAllUsers" resultMap="userResultSet">
+        <include refid="selectAllUsers" /> where utype != '管理员' ORDER BY uid DESC
+    </select>
+
     <select id="getUserByLoginId" resultMap="userResultSet">
-        <include refid="getAllUsers" /> where uloginid = #{ loginId }
+        <include refid="selectAllUsers" /> where uloginid = #{ loginId }
     </select>
 
     <select id="getUsersByType" resultMap="userResultSet">
-        <include refid="getAllUsers" /> where utype = #{ type }
+        <include refid="selectAllUsers" /> where utype = #{ type }
     </select>
+
+    <insert id="add">
+        insert into userinfo (uloginid, uloginpsw, uname, utype, ustatus)
+        values (#{user.loginId}, #{user.loginPsw}, #{user.name}, #{user.type}, #{user.status})
+    </insert>
 
     <update id="update">
       UPDATE userinfo
@@ -36,6 +46,9 @@
           </if>
           <if test="user.type != null">
             utype = #{user.type},
+          </if>
+          <if test="user.status != null">
+              ustatus = #{user.status},
           </if>
       </set>
       WHERE uid = #{ user.id }

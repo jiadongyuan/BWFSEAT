@@ -36,4 +36,23 @@ public class UserServiceImpl implements UserService{
     public List<User> getMasters() {
         return userMapper.getUsersByType("班主任");
     }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userMapper.getAllUsers();
+    }
+
+    @Override
+    public void modify(User user) {
+        userMapper.update(user);
+    }
+
+    @Override
+    public boolean create(User user) {
+        if(userMapper.getUserByLoginId(user.getLoginId()) != null) {
+            return false;
+        }
+        userMapper.add(user);
+        return true;
+    }
 }
