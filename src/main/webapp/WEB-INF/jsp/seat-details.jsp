@@ -311,7 +311,6 @@
         });
 
 
-
         $(SEAT_INPUT_CSS_SELECTOR).on("blur", function () {
             //  “座位”文本框失去焦点时，设置成“非选中”样式：只读、手型指针
             $(this).attr("readonly", true).css("cursor", "pointer");
@@ -320,7 +319,6 @@
             if (editingId !== window.parseInt(this.id)) {
                 return;
             }
-            alert("waitting....");
             var $txtSeat = $(this);
             var url = "${pageContext.request.contextPath}/seat/modify";
             var id = window.parseInt($txtSeat.attr("id"));
