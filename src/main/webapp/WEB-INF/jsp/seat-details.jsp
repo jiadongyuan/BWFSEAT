@@ -289,11 +289,12 @@
                         "seat": {"id": editingId, "owner": currUser}
                     };
                     ws.send(JSON.stringify(message));
-
+                    <%--
                     var status = $.trim($("#status-" + this.id).html());
                     var param = {"id": this.id, "owner.id": currUser.id, "owner.name": currUser.name, "owner.type": currUser.type, "status": status};
                     var url = "${pageContext.request.contextPath}/seat/editingStart";
                     $.post(url, param);
+                    --%>
                 }
             } else if (currUser.type === "班主任") {
                 if (confirm("该座位上学员不是自己的学员，不能修改！\n但您可以删除该座位学员信息，是否要删除？")) {
@@ -323,7 +324,6 @@
             if (editingId !== window.parseInt(this.id)) {
                 return;
             }
-            alert("waitting...");
             var $txtSeat = $(this);
             var url = "${pageContext.request.contextPath}/seat/modify";
             var id = window.parseInt($txtSeat.attr("id"));
@@ -390,10 +390,11 @@
             }
 
             editingId = null;
-
+            <%--
             var param = {"id": this.id};
             var url = "${pageContext.request.contextPath}/seat/editingEnd";
             $.post(url, param);
+            --%>
         });
 
     })
