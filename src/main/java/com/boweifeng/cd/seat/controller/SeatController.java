@@ -51,6 +51,7 @@ public class SeatController {
         editingSeatMap.remove(editingSeat.getId());
     }
 
+    /*
     @ResponseBody
     @RequestMapping("/getEditingSeatList")
     public List<Seat> getEditingSeatList(HttpServletRequest request, int kid) {
@@ -66,5 +67,5 @@ public class SeatController {
         }
         return editingSeatList;
     }
-
+    **/
 }

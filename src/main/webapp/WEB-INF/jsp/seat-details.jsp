@@ -97,21 +97,25 @@
     };
 
     $(function () {
-
+        <%--
         /**
          * 页面打开后，首先加载所有可能正在编辑中的座位信息
          */
         var url = "${pageContext.request.contextPath}/seat/getEditingSeatList";
         var param = { "kid" : currKlassId };
         $.getJSON(url, param, function (editingSeatList) {
+
+           console.log(editingSeatList)
            for(var i = 0; i < editingSeatList.length; i++) {
                var s = editingSeatList[i];
-               $("#" + s.id).val("['" + s.owner.name + "'编辑中]");
-               $("#ownerinfo-" + s.id).html(JSON.stringify(s.owner))
+               var oldOwner = JSON.parse($.trim($("#ownerinfo-" + s.id).html()));
+               if(!oldOwner) {
+                   $("#" + s.id).val("['" + s.owner.name + "'编辑中]");
+                   $("#ownerinfo-" + s.id).html(JSON.stringify(s.owner))
+               }
            }
         });
-
-
+        --%>
         var ws;
         var ipAndPort = "localhost:80";
         if ('WebSocket' in window) {
@@ -319,6 +323,7 @@
             if (editingId !== window.parseInt(this.id)) {
                 return;
             }
+            alert("waitting...");
             var $txtSeat = $(this);
             var url = "${pageContext.request.contextPath}/seat/modify";
             var id = window.parseInt($txtSeat.attr("id"));

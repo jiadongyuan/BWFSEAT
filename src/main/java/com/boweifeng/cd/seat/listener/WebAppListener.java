@@ -7,7 +7,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import java.util.concurrent.ConcurrentHashMap;
 
-@WebListener
+//@WebListener
 public class WebAppListener implements ServletContextListener {
 
     @Override
