@@ -276,6 +276,11 @@
                 $(this).blur();
                 return;
             }
+
+            if (currUser.type == "讲师") {
+                return;
+            }
+
             var owner = JSON.parse($.trim($("#ownerinfo-" + this.id).html()));
             if (!owner || owner.id === currUser.id) {
                 $(this).attr("readonly", false).css("cursor", "auto");

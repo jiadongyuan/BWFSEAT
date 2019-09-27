@@ -74,6 +74,7 @@
                     <select name="type">
                         <option value="咨询师">咨询师</option>
                         <option value="班主任">班主任</option>
+                        <option value="讲师">讲师</option>
                     </select>
                 </p>
                 <p>
