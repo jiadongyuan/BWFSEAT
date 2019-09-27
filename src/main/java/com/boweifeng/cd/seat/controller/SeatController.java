@@ -1,8 +1,11 @@
 package com.boweifeng.cd.seat.controller;
 
 import com.boweifeng.cd.seat.entity.Seat;
+import com.boweifeng.cd.seat.entity.User;
 import com.boweifeng.cd.seat.service.KlassService;
 import com.boweifeng.cd.seat.service.SeatService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +21,8 @@ import java.util.Map;
 @RequestMapping("/seat")
 public class SeatController {
 
+    private static final Logger logger = LogManager.getLogger();
+
     @Autowired
     private SeatService seatService;
     @Autowired
@@ -32,8 +37,15 @@ public class SeatController {
 
     @ResponseBody
     @RequestMapping("/modify")
-    public void modify(Seat seat) {
+    public void modify(Seat seat, HttpServletRequest request) {
+        Seat oldSeat = seatService.getSeatById(seat.getId());
         seatService.modify(seat);
+        Seat newSeat = seatService.getSeatById(seat.getId());
+        User currUser = (User)request.getSession().getAttribute("currUser");
+        String log = "\r\n\t用户[" + currUser.getLoginId() +  "-" + currUser.getName() + "-" + currUser.getType() + "]编辑了座位信息";
+        log += "\r\n\t编辑前的座位信息：[录入者:" + (oldSeat.getOwner() != null ? oldSeat.getOwner().getName() : "null") + "][班级：" + oldSeat.getKlass().getName() + "][第" + oldSeat.getRow() + "排第" + oldSeat.getColumn() + "列][座位信息：" + oldSeat.getContent() + "][座位状态：" + oldSeat.getStatus() + "]";
+        log += "\r\n\t编辑后的座位信息：[录入者:" + (newSeat.getOwner() != null ? newSeat.getOwner().getName() : "null") + "][班级：" + newSeat.getKlass().getName() + "][第" + newSeat.getRow() + "排第" + newSeat.getColumn() + "列][座位信息：" + newSeat.getContent() + "][座位状态：" + newSeat.getStatus() + "]";
+        logger.info(log + "\n");
     }
 
     /*

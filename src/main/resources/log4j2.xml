@@ -2,8 +2,18 @@
 <configuration status="OFF">
     <appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <PatternLayout pattern="%d{YYYY-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
+        <RollingFile name="RollingFileInfo" fileName="${sys:user.home}/logs/info.log"
+                     filePattern="${sys:user.home}/logs/$${date:yyyy-MM}/info-%d{yyyy-MM-dd}-%i.log">
+            <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+            <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="[%d{YYYY-MM-dd HH:mm:ss:SSS}] [%p] - %l - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="100 MB"/>
+            </Policies>
+        </RollingFile>
     </appenders>
     <loggers>
         <root level="info">
@@ -12,5 +22,9 @@
         <logger name="com.boweifeng.cd.seat.mapper" additivity="false" level="info">
             <appender-ref ref="Console" />
         </logger>
+        <logger name="com.boweifeng.cd.seat.controller" additivity="false" level="info">
+            <appender-ref ref="RollingFileInfo" />
+        </logger>
+
     </loggers>
 </configuration>

@@ -15,4 +15,6 @@ public interface SeatMapper {
     void deleteSeatsByKlassGreatThan(@Param("kid") int kid, @Param("seatCount") int seatCount);
 
     void update(@Param("seat") Seat seat);
+
+    Seat getSeatById(int id);
 }

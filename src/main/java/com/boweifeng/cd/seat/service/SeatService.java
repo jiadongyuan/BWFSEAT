@@ -8,4 +8,6 @@ public interface SeatService {
     List<List<Seat>> getSeatsByKlass(int kid);
 
     void modify(Seat seat);
+
+    Seat getSeatById(int id);
 }

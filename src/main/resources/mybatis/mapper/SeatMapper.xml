@@ -19,6 +19,13 @@
         </association>
     </resultMap>
 
+    <select id="getSeatById" resultMap="seatResultMap">
+        select sid, scontent, srow, scolumn, sownerid, uname, utype, sstatus, sklassid, kname FROM seatinfo
+        left join userinfo on (sownerid = uid)
+        left join klassinfo on (sklassid = kid)
+        where sid = #{ id }
+    </select>
+
     <select id="getSeatsByKlass" resultMap="seatResultMap">
         select sid, scontent, srow, scolumn, sownerid, uname, utype, sstatus, sklassid, kname FROM seatinfo
         left join userinfo on (sownerid = uid)

@@ -17,6 +17,11 @@ public class SeatServiceImpl implements SeatService {
     private SeatMapper seatMapper;
 
     @Override
+    public Seat getSeatById(int id) {
+        return seatMapper.getSeatById(id);
+    }
+
+    @Override
     public List<List<Seat>> getSeatsByKlass(int kid) {
         List<Seat> seatsAll = seatMapper.getSeatsByKlass(kid);
         List<List<Seat>> seats = new ArrayList<>();
